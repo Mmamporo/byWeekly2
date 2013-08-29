@@ -1,114 +1,60 @@
-<?php
-	require "user.class.php";
-	if(isset($_POST['username'])&&isset($_POST['email'])&&isset($_POST['password'])&&isset($_POST['password1'])){
-		$username = $_POST['username'];
-		$email = $_POST['email'];
-		$password = $_POST['password'];
-		$password1 = $_POST['password1'];
-		if(!empty($username)&&!empty($email)&&!empty($password)&&!empty($password1)){
-			$error = "";
-			if(!$var2 = preg_match("%[a-zA-Z0-9_\.-]{5,10}%", $username)){
-					$error .= "* Username must be 5 to 10 charecters long<br/>";
-			}
-			if(!$var3 = preg_match("%^[a-z0-9A-Z_\.-]+@[a-z0-9A-Z_-]+\.[a-z0-9A-Z_\.-]%", $email)){
-					$error .= "* Invalid email<br/>";
-			}
-			if(!$var4 = preg_match("%[a-zA-Z0-9\W]{8,}%", $password)){
-					$error .= "* Password must be 8 charecters or more<br/>";
-					
-			}else{
-				if($password != $password1){
-					$error .= "* Password must match<br/>";
-				}
-			}
-			if($var2&&$var3&&$var4&&$password == $password1){
-				//registration goes here if all validations pass
-			$user = new User($username,$email);
-			#$user->set_password($password);
-					
-			}
-		}else{
-			$error = "* Enter all fields";
-		}
-	}
-?>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Florence</title>
-<style type="text/css">
-.RegistrationForm {
-	text-align: center;
-	font-style: italic;
-	font-weight: bold;
-	font-size: 24px;
-}
-body,td,th {
-	color: #0FF;
-}
-body {
-	background-color: #000;
-	background-image: url(background.png);
-}
-</style>
+<title>Untitled Document</title>
+<?php
+$fName = trim($_POST['fName']);
+$surname = trim($_POST['surname']);
+$uName = trim($_POST['uName']);
+$psswrd = trim($_POST['psswrd']);
+$rePsswrd = trim($_POST['rePsswrd']);
+$email = trim($_POST['email']);
+$DOCUMENT_ROOT = $_SERVER['DOCUMENT_ROOT'];
+?>
 </head>
 
 <body>
-<div align="center">
-  <p class="RegistrationForm">Registration Form</p>
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    
-		<!--end of header-->
-			<div class="container" >
-		<div class="row" >
-		  <div class="col-lg-4"></div>
-		  <div class="col-lg-4" id="orange">
-		  
-		  
-			<form action="register.php" method="post">
-			  <fieldset>
-				<legend>Registration form</legend>
-				<p id="error"><b><?php if(isset($error)){
-							echo $error;	
-							}
-							?></b></p>
-				<p id="success"><b><?php
-					$user = new User($username,$email);
-						if(isset($user)){
-							$save = $user->save($user->username,$user->email,$user->password);
-							$user->dispalayUserInfo();
-							}
-				?></b></p>
-				<div class="form-group">
-				  <label >Username</label>
-				  <input type="text" class="form-control" value="<?php if(isset($username)){echo $username;}?>" name="username" placeholder="Mmamporo">
-				</div>
-				<div class="form-group">
-				  <label >Email address</label>
-				  <input type="email" class="form-control" value="<?php if(isset($email)){echo $email;}?>" name="email" placeholder="mphela.florence@gmail.com">
-				</div>
-				<div class="form-group">
-				  <label >Password</label>
-				  <input type="password" class="form-control" name="password" placeholder="Password">
-				</div>
-				<div class="form-group">
-				  <label >Re-Type Password</label>
-				  <input type="password" class="form-control" name="password1" placeholder="Re-Enter Password">
-				</div>
-				<button type="submit"  class="btn btn-default">Submit</button><br/><br/>
-			  </fieldset>
-			  
-			</form>
+<?php
+require "User.class.php";
 
-		  
-		  
-		  </div>
-		  <div class="col-lg-4"></div>
-		</div>
-	</div>
-	<!--end of form-->
-    <?php include 'footer.php'; ?>
+if(!$fName || !$surname || !$uName || !$psswrd || !$rePsswrd|| !$email)
+{
+	echo "All fields must be entered!!!!!";
+	exit;
+}
+if(!(preg_match("#[a-zA-Z]+#",$fName) && (preg_match("#[a-zA-Z]+#",$surname))))
+{
+	echo "Your name and surname must contain only letters";
+	
+}
+
+if(!preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-.]/",$email))
+{
+	echo "Wrong email format</br>";
+	exit;
+}
+ 
+if(!(preg_match("#[0-9]+#",$psswrd) && (preg_match("#[.]+#",$psswrd)) && (preg_match("#[a-zA-Z]+#",$psswrd))))
+{
+	echo "Password should contain atleast 1 number, 1 character  and 1 alphabet</br>";
+	exit;
+}
+if(((strlen($psswrd) < 8 )))
+{
+	echo "Password too short</br>";
+	echo "it must be 8 or more  characters long</br>";
+	exit;
+}
+if($psswrd != $rePsswrd)
+{
+	echo "The passwords does not match</br>";
+	exit;
+}
+echo "YOUR DETAILS ARE AS FOLLOWS:</br>";
+$user  = new User($uName,$email);
+$user->save();
+$user->displayUserInfo($uName,$email);
+?>
 </body>
 </html>
